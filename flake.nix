@@ -5,13 +5,14 @@
       pkgs = extrapkg.pkgs;
       artiq = extrapkg.packages.x86_64-linux;
     in {
-      defaultPackage.x86_64-linux = pkgs.buildEnv {
+      packages.x86_64-linux.default = pkgs.buildEnv {
         name = "artiq-env";
         paths = [
           (pkgs.python3.withPackages(ps: [
             artiq.artiq
             artiq.flake8-artiq
           ]))
+          pkgs.vscodium
         ];
       };
     };
