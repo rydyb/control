@@ -7,7 +7,10 @@ Extends [ARTIQ](https://github.com/m-labs/artiq) for our lab.
 Install [nix](https://nix.dev/) and enable experimental features
 ```shell
 mkdir -p ~/.config/nix
-echo "experimental-features = nix-command flakes" > ~/.config/nix/nix.conf
+cat << EOF >> ~/.config/nix/nix.conf
+experimental-features = nix-command flakes
+accept-flake-config = true
+EOF
 ```
 
 ## Usage
