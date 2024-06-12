@@ -2,4 +2,5 @@ from artiq.experiment import EnvExperiment
 
 
 class MyExperiment(EnvExperiment):
-    pass
+    def build(self):
+        self.setattr_device("core")

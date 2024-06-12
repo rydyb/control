@@ -3,11 +3,14 @@
     nixpkgs.follows = "artiq/nixpkgs";
 
     artiq.url = "github:m-labs/artiq/release-8";
+    devenv.url = "github:cachix/devenv";
   };
 
-  outputs = { self, nixpkgs, artiq }:
+  outputs = { self, nixpkgs, artiq, devenv, ... } @ inputs:
     let
-      pkgs = nixpkgs.legacyPackages.x86_64-linux;
+      system = "x86_64-linux";
+
+      pkgs = nixpkgs.legacyPackages.${system};
 
       control = pkgs.python3Packages.buildPythonPackage {
         pname = "rydyb-control";
@@ -15,25 +18,22 @@
         src = self;
         nativeBuildInputs = [ pkgs.qt5.wrapQtAppsHook ];
         propagatedBuildInputs = [
-          artiq.packages.x86_64-linux.artiq
+          artiq.packages.${system}.artiq
         ];
       };
     in rec {
-      packages.x86_64-linux = {
-        inherit control;
-      };
+      packages.${system}.default = control;
 
-      packages.x86_64-linux.default = pkgs.python3.withPackages(ps: [
-        packages.x86_64-linux.control
-      ]);
-
-      devShells.x86_64-linux.default = pkgs.mkShell {
-        packages = [
-          control
+      devShells.${system}.default = devenv.lib.mkShell {
+        inherit inputs pkgs;
+        modules = [
+          ({ pkgs, config, ... }: {
+            packages = [
+              artiq.packages.${system}.artiq
+              control
+            ];
+          })
         ];
-        shellHook = ''
-          export PYTHONPATH=${pkgs.python3}
-        '';
       };
     };
 }
