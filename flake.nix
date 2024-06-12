@@ -26,5 +26,14 @@
       packages.x86_64-linux.default = pkgs.python3.withPackages(ps: [
         packages.x86_64-linux.control
       ]);
+
+      devShells.x86_64-linux.default = pkgs.mkShell {
+        packages = [
+          control
+        ];
+        shellHook = ''
+          export PYTHONPATH=${pkgs.python3}
+        '';
+      };
     };
 }
